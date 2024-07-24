@@ -1,6 +1,3 @@
-<div align=center>
-<img src="https://github.com/Krismilek/SARAs/blob/main/main/2.png"/>
-</div>
 # SARAs（Substitution and Replay Attacks）
 
 This project is implemented based on HEDB, and we would like to thank everyone involved in the HEDB project. The concept of SARAs is to achieve cracking by replacing the parameters sent to the TEE(Trusted Execution Environment).
