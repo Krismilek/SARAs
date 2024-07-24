@@ -1,76 +1,45 @@
-# tpcds-kit
+# TPC-DS
 
-The official TPC-DS tools can be found at [tpc.org](http://www.tpc.org/tpc_documents_current_versions/current_specifications.asp).
+Our TPC-DS implementation is based on the tpcds-kit project, available at https://github.com/gregrahn/tpcds-kit. We would like to thank everyone involved in this project.
 
-This version is based on v2.10.0 and has been modified to:
+# Structure
 
-* Allow compilation under macOS (commit [2ec45c5](https://github.com/gregrahn/tpcds-kit/commit/2ec45c5ed97cc860819ee630770231eac738097c))
-* Address obvious query template bugs like
-  * query22a: [#31](https://github.com/gregrahn/tpcds-kit/issues/31)
-  * query77a: [#43](https://github.com/gregrahn/tpcds-kit/issues/43)
-* Rename `s_web_returns` column `wret_web_site_id` to `wret_web_page_id` to match specification. See [#22](https://github.com/gregrahn/tpcds-kit/issues/22) & [#42](https://github.com/gregrahn/tpcds-kit/issues/42).
+.
+├── enc_sql                           # cipher query 
+├── run.py                             # python script to run TPC-DS
+├── README.md
+├── tpcds.json                       # config file
+├── tools                                # dgen and save directory
+└── query_templates     	  # generate sql
 
-To see all modifications, diff the files in the master branch to the version branch. Eg: `master` vs `v2.10.0`.
+# How to use?
 
-## Setup
+Firstly, move the `tpcds` folder to a directory where the user has read and write permissions and modify the configuration file `tpcds.json`. 
 
-### Linux
-
-Make sure the required development tools are installed:
-
-Ubuntu:
-```
-sudo apt-get install gcc make flex bison byacc git
-```
-
-CentOS/RHEL:
-```
-sudo yum install gcc make flex bison byacc git
-```
-
-Then run the following commands to clone the repo and build the tools:
-
-```
-git clone https://github.com/gregrahn/tpcds-kit.git
-cd tpcds-kit/tools
-make OS=LINUX
+```json
+{
+    "test_name": "tpchds",
+    "pg_ip": "127.0.0.1",
+    "pg_port": "5432",
+    "pg_user": "postgres",
+    "pg_password": "123456",
+    "pg_log_dir": "/tmp",
+    "data_size": "1",
+    "tpcds_file_dir":"/var/tpcds-kit-master/",
+    "HEDB_file_dir":"/root/HEDB/",
+    "secure_db":"tpcds_test",
+    "insecure_db":"test",
+    "output":"/var/tpcds-kit-master/output/",
+    "querydir":"/var/tpcds-kit-master/enc_sql/"
+}
 ```
 
-### macOS
+Secondly, Run the script (you may need to install python package `psycopg2`).
 
-Make sure the required development tools are installed:
-
-```
-xcode-select --install
-```
-
-Then run the following commands to clone the repo and build the tools:
-
-```
-git clone https://github.com/gregrahn/tpcds-kit.git
-cd tpcds-kit/tools
-make OS=MACOS
+```bash
+$ python3 run.py -c
+$ python3 run.py -l
+$ python3 run.py -t
 ```
 
-## Using the TPC-DS tools
-
-### Data generation
-
-Data generation is done via `dsdgen`.  See `dsdgen -help` for all options.  If you do not run `dsdgen` from the `tools/` directory then you will need to use the option `-DISTRIBUTIONS /.../tpcds-kit/tools/tpcds.idx`. The output directory (specified via the `-DIR` option) must exist prior to running `dsdgen`. 
-
-### Query generation
-
-Query generation is done via `dsqgen`.   See `dsqgen -help` for all options.
-
-The following command can be used to generate all 99 queries in numerical order (`-QUALIFY`) for the 10TB scale factor (`-SCALE`) using the Netezza dialect template (`-DIALECT`) with the output going to `/tmp/query_0.sql` (`-OUTPUT_DIR`).
-
-```
-dsqgen \
--DIRECTORY ../query_templates \
--INPUT ../query_templates/templates.lst \
--VERBOSE Y \
--QUALIFY Y \
--SCALE 10000 \
--DIALECT netezza \
--OUTPUT_DIR /tmp
-```
+Thirdly, if you want to generate TPC-DS data files, you can send `tpcds/enc_sql/enc_q0.sql` to PostgreSQL after modifying `HEDB/src/integrity_zone/udf/enc_int4.cpp`.
