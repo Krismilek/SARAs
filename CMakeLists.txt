@@ -41,12 +41,12 @@ message(STATUS "GTKMM_LIBRARIES: ${GTKMM_LIBRARIES}")
 
 # 递归地将所有源文件添加到DEBUG_SRCS变量中
 file(GLOB_RECURSE DEBUG_SRCS
-    #"integrity_zone/crack.cpp"
+    #"integrity_zone/SARAs_cmd.cpp"
     "integrity_zone/ops_client/enc_int_ops.cpp"
     "integrity_zone/interface/*.cpp"
     "integrity_zone/record_replay/*.cpp"
     "utils/sync.cpp"
-    "integrity_zone/1111.cpp"
+    "integrity_zone/SARAs_UI.cpp"
 )
 
 # 添加可执行文件目标    
