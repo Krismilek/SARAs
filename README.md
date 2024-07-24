@@ -61,7 +61,7 @@ Secondly, comment out all the code in `HEDB/src/integrity_zone/record_replay/rep
 
 Thirdly, modify line 25 in `HEDB/src/integrity_zone/interface/interface.cpp` to `true`, then comment out lines 92 to 105.
 
-Finally,recompile and link HEDB again, send SQL to postgresql, then you can find related log file in `/var/lib/postgresql/14/main`.
+Finally,recompile and link HEDB again, send SQL to PostgreSQL, then you can find related log file in `/var/lib/postgresql/14/main`.
 
 ```bash
 $ cd HEDB && ./c.sh
@@ -71,7 +71,7 @@ $ cd HEDB && ./c.sh
 
 Firstly, copy `record/enc_int4.cpp` ,then paste to `HEDB/src/integrity_zone/udf/enc_int4.cpp`.
 
-Secondly, recompile and link HEDB again, send SQL  which contain **PLUS**  operator to postgresql, then you can find related data file in `/var/lib/postgresql/14/main`.
+Secondly, recompile and link HEDB again, send SQL  which contain **PLUS**  operator to PostgreSQL, then you can find related data file in `/var/lib/postgresql/14/main`.
 
 ```bash
 $ cd HEDB && ./c.sh
