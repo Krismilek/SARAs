@@ -1,7 +1,7 @@
 .textview {
     font-size: 16px;
     background-color: rgba(255, 255, 255, 0.5); /* 半透明白色背景 */
-    background-image: url('/root/HEDB/2.png');
+    background-image: url('/root/HEDB/src/integrity_zone/2.png');
     background-size: cover;
     background-position: center center; /* 居中显示背景图片 */
 }
