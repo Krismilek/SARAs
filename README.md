@@ -1,4 +1,6 @@
-![](https://github.com/Krismilek/SARAs/blob/main/main/2.png)
+<div align=center>
+<img src="https://github.com/Krismilek/SARAs/blob/main/main/2.png"/>
+</div>
 
 # SARAs（Substitution and Replay Attacks）
 
