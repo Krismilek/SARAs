@@ -2,16 +2,6 @@
 
 Our TPC-DS implementation is based on the tpcds-kit project, available at https://github.com/gregrahn/tpcds-kit. We would like to thank everyone involved in this project.
 
-# Structure
-
-.
-├── enc_sql                           # cipher query 
-├── run.py                             # python script to run TPC-DS
-├── README.md
-├── tpcds.json                       # config file
-├── tools                                # dgen and save directory
-└── query_templates     	  # generate sql
-
 # How to use?
 
 Firstly, move the `tpcds` folder to a directory where the user has read and write permissions and modify the configuration file `tpcds.json`. 
