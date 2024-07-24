@@ -54,3 +54,4 @@ cd HEDB && ./c.sh && ./build/attackui 2>/dev/null
 
 - ## Generate log file
 
+Firstly,
