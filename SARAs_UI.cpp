@@ -1833,21 +1833,21 @@ protected:
                     write("Log File is empty!\n");
                     break;
                 }
-                // write("\n************************************************Preparing Stage************************************************\n");
-                // write("Fetching ciphertext for 1......\n");
-                // if(get_cipher_one(number)){
-                //     write("Ciphertext for 1 successfully retrieved!\n");
-                // }else{
-                //     write("Failed to retrieve ciphertext for 1, decryption unsuccessful~\n");
-                //     break;
-                // }
-                // write("Fetching ciphertext for 2-n......\n");
-                // if(get_cipher_from_1_to_n(number)){
-                //     write("Global ciphertext retrieval successful, saved at: /var/lib/postgresql/14/main/part.txt\n");
-                // }else{
-                //     write("Global ciphertext retrieval failed, decryption unsuccessful~\n");
-                //     break;
-                // }
+                write("\n************************************************Preparing Stage************************************************\n");
+                write("Fetching ciphertext for 1......\n");
+                if(get_cipher_one(number)){
+                    write("Ciphertext for 1 successfully retrieved!\n");
+                }else{
+                    write("Failed to retrieve ciphertext for 1, decryption unsuccessful~\n");
+                    break;
+                }
+                write("Fetching ciphertext for 2-n......\n");
+                if(get_cipher_from_1_to_n(number)){
+                    write("Global ciphertext retrieval successful, saved at: /var/lib/postgresql/14/main/part.txt\n");
+                }else{
+                    write("Global ciphertext retrieval failed, decryption unsuccessful~\n");
+                    break;
+                }
                 write("\n*************************************************Cracking Stage*************************************************\n");
                 write("Crack in progress, please wait......\n");
                 if(binary_search(number)){
@@ -1865,28 +1865,28 @@ protected:
                     write("Log File is empty!\n");
                     break;
                 } 
-                // write("\n************************************************Preparing Stage************************************************\n");
-                // write("Fetching ciphertext for 1......\n");
-                // if(get_cipher_one(number)){
-                //     write("Ciphertext for 1 successfully retrieved!\n");
-                // }else{
-                //     write("Failed to retrieve ciphertext for 1, decryption unsuccessful~\n");
-                //     break;
-                // }
-                // write("Fetching ciphertext for 2-n......\n");
-                // if(get_cipher_from_1_to_n(number)){
-                //     write("Global ciphertext retrieval successful, saved at: /var/lib/postgresql/14/main/part.txt\n");
-                // }else{
-                //     write("Global ciphertext retrieval failed, decryption unsuccessful~\n");
-                //     break;
-                // }
-                // write("Fetching ciphertext for -n to 0......\n");
-                // if(get_cipher_from_n1_nn(number)){
-                //     write("Ciphertext for -n to 0 successfully retrieved, saved at: /var/lib/postgresql/14/main/part.txt\n");
-                // }else{
-                //     write("Failed to retrieve global ciphertext for -n to 0, decryption unsuccessful~\n");
-                //     break;
-                // }
+                write("\n************************************************Preparing Stage************************************************\n");
+                write("Fetching ciphertext for 1......\n");
+                if(get_cipher_one(number)){
+                    write("Ciphertext for 1 successfully retrieved!\n");
+                }else{
+                    write("Failed to retrieve ciphertext for 1, decryption unsuccessful~\n");
+                    break;
+                }
+                write("Fetching ciphertext for 2-n......\n");
+                if(get_cipher_from_1_to_n(number)){
+                    write("Global ciphertext retrieval successful, saved at: /var/lib/postgresql/14/main/part.txt\n");
+                }else{
+                    write("Global ciphertext retrieval failed, decryption unsuccessful~\n");
+                    break;
+                }
+                write("Fetching ciphertext for -n to 0......\n");
+                if(get_cipher_from_n1_nn(number)){
+                    write("Ciphertext for -n to 0 successfully retrieved, saved at: /var/lib/postgresql/14/main/part.txt\n");
+                }else{
+                    write("Failed to retrieve global ciphertext for -n to 0, decryption unsuccessful~\n");
+                    break;
+                }
                 write("\n*************************************************Cracking Stage*************************************************\n");
                 write("Crack in progress, please wait......\n");
                 if(search()){
@@ -1936,26 +1936,22 @@ protected:
                     write("Log File is empty!\n");
                     break;
                 }
-                // start = clock();
-                // write("\n************************************************Preparing Stage************************************************\n");
-                // write("Fetching ciphertext for 1......\n");
-                // if(get_cipher_one(number)){
-                //     write("Ciphertext for 1 successfully retrieved!\n");
-                // }else{
-                //     write("Failed to retrieve ciphertext for 1, decryption unsuccessful~\n");
-                //     break;
-                // }
-                // write("Fetching ciphertext for -n to n......\n");
-                // if(get_cipher_from_1_to_n_sum(number)){
-                //     write("Ciphertext for 1 to n successfully retrieved, saved at: /var/lib/postgresql/14/main/part.txt\n");
-                //     write("Ciphertext for -n to 0 successfully retrieved, saved at: /var/lib/postgresql/14/main/NN.txt\n");
-                // }else{
-                //     write("Failed to retrieve global ciphertext for -n to n~\n");
-                //     break;
-                // }
-                // sep = clock();
-                // elapsed = double(sep - start) / CLOCKS_PER_SEC;
-                // write("Create all cipher time:"+std::to_string(elapsed)+"s\n");
+                write("\n************************************************Preparing Stage************************************************\n");
+                write("Fetching ciphertext for 1......\n");
+                if(get_cipher_one(number)){
+                    write("Ciphertext for 1 successfully retrieved!\n");
+                }else{
+                    write("Failed to retrieve ciphertext for 1, decryption unsuccessful~\n");
+                    break;
+                }
+                write("Fetching ciphertext for -n to n......\n");
+                if(get_cipher_from_1_to_n_sum(number)){
+                    write("Ciphertext for 1 to n successfully retrieved, saved at: /var/lib/postgresql/14/main/part.txt\n");
+                    write("Ciphertext for -n to 0 successfully retrieved, saved at: /var/lib/postgresql/14/main/NN.txt\n");
+                }else{
+                    write("Failed to retrieve global ciphertext for -n to n~\n");
+                    break;
+                }
                 write("\n*************************************************Cracking Stage*************************************************\n");
                 write("Crack in progress, please wait......\n");
                 if(SumSearch()){
@@ -1973,21 +1969,21 @@ protected:
                     write("Log File is empty!\n");
                     break;
                 }
-                // write("\n************************************************Preparing Stage************************************************\n");
-                // write("Fetching ciphertext for 1......\n");
-                // if(get_cipher_one(number)){
-                //     write("Ciphertext for 1 successfully retrieved!\n");
-                // }else{
-                //     write("Failed to retrieve ciphertext for 1, decryption unsuccessful~\n");
-                //     break;
-                // }
-                // write("Fetching ciphertext for 2-n......\n");
-                // if(get_cipher_from_1_to_n_mod()){
-                //     write("Global ciphertext retrieval successful, saved at the specified path: /var/lib/postgresql/14/main/part.txt\n");
-                // }else{
-                //     write("Global ciphertext retrieval failed, decryption unsuccessful~\n");
-                //     break;
-                // }
+                write("\n************************************************Preparing Stage************************************************\n");
+                write("Fetching ciphertext for 1......\n");
+                if(get_cipher_one(number)){
+                    write("Ciphertext for 1 successfully retrieved!\n");
+                }else{
+                    write("Failed to retrieve ciphertext for 1, decryption unsuccessful~\n");
+                    break;
+                }
+                write("Fetching ciphertext for 2-n......\n");
+                if(get_cipher_from_1_to_n_mod()){
+                    write("Global ciphertext retrieval successful, saved at the specified path: /var/lib/postgresql/14/main/part.txt\n");
+                }else{
+                    write("Global ciphertext retrieval failed, decryption unsuccessful~\n");
+                    break;
+                }
                 write("\n*************************************************Cracking Stage*************************************************\n");
                 write("Crack in progress, please wait......\n");
                 if(binary_search(number)){
