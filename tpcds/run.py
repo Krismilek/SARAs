@@ -32,8 +32,8 @@ class tpcds():
     def LoadTableData(self,default = True):
         if default:
             #Clean the data and exclude empty data
-            # cmd = f"cd tools && rm -f data/*.dat && ./dsdgen -sc {self.datasize} -DIR 'data/'&& chmod 777 data/*.dat"
-            # self.executeCommand(cmd)
+            cmd = f"cd tools && rm -f data/*.dat && ./dsdgen -sc {self.datasize} -DIR 'data/'&& chmod 777 data/*.dat"
+            self.executeCommand(cmd)
             cmd = 'cd tools/data && python3 a.py'
             self.executeCommand(cmd)
             cmd = '''
