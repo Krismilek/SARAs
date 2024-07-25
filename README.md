@@ -4,7 +4,7 @@
 
 # SARAs（Substitution and Replay Attacks）
 
-This project is implemented based on HEDB, and we would like to thank everyone involved in the HEDB project. The concept of SARAs is to achieve cracking by replacing the parameters sent to the TEE(Trusted Execution Environment).
+This project is implemented based on HEDB, and we would like to thank everyone involved in the HEDB project. Our code is written based on the HEDB code, but we did not modify the functional functions within HEDB. We only acted as DBAs, invoking relevant function interfaces, such as functions for interacting with the TEE and logging functions. The concept of SARAs is to achieve cracking by replacing the parameters sent to the TEE(Trusted Execution Environment).
 
 # Experiment Environment
 

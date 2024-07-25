@@ -33,3 +33,7 @@ $ python3 run.py -t
 ```
 
 Thirdly, if you want to generate TPC-DS data files, you can send `tpcds/enc_sql/enc_q0.sql` to PostgreSQL after modifying `HEDB/src/integrity_zone/udf/enc_int4.cpp`.
+
+# Why is `tools/data/a.py` needed?
+
+Because the default generated dataset contains empty data, which can affect queries, we need to clean the data.
