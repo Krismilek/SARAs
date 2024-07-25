@@ -4,7 +4,9 @@
 
 # SARAs（Substitution and Replay Attacks）
 
-This project is implemented based on HEDB, and we would like to thank everyone involved in the HEDB project. Our code is written based on the HEDB code, but we did not modify the functional functions within HEDB. We only acted as DBAs, invoking relevant function interfaces, such as functions for interacting with the TEE and logging functions. The concept of SARAs is to achieve cracking by replacing the parameters sent to the TEE(Trusted Execution Environment).
+This project is implemented based on HEDB, and we would like to thank everyone involved in the HEDB project. Our code is written based on the HEDB code, but we did not modify the functional functions within HEDB. We only acted as DBAs, invoking relevant function interfaces, such as functions for interacting with the TEE and logging functions. The concept of SARAs is to achieve cracking by replacing the parameters sent to the TEE。
+
+`record/enc_int4.cpp` adds code to record the parameters passed to the TEE in the HEDB project's `HEDB/src/integrity_zone/udf/enc_int4.cpp`. `record/record.cpp` adds digital signature code to the HEDB project's `HEDB/src/integrity_zone/record_replay/recorder.cpp`. These two pieces of code do not modify the core functionality of the HEDB code itself.
 
 # Experiment Environment
 

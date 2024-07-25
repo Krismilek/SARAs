@@ -251,18 +251,6 @@ Datum enc_int4_cmp(PG_FUNCTION_ARGS)
     EncInt* right = PG_GETARG_ENCINT(1);
     int res;
 
-    // FILE *fp;
-    // std::string filename;
-    // filename = "/var/lib/postgresql/14/main/store.txt";
-    // fp = fopen(filename.c_str(), "a"); // 打开文件以写入模式
-    // if (fp == NULL) {
-    //     printf("无法打开文件。\n");
-    //     // return;  
-    // } 
-    // fprintf(fp,"进入到enc_int4_cmp\n");
-    // fflush(fp);
-    // fclose(fp);
-
     int error = enc_int_cmp(left, right, &res);
     if (error) print_error("%s %d", __func__, error);
 #ifdef LOG_MODE
@@ -282,43 +270,6 @@ Datum enc_int4_eq(PG_FUNCTION_ARGS)
     EncInt* right = PG_GETARG_ENCINT(1);
     int res;
     bool cmp = false;
-
-    // std::vector<int> target;
-    // for(int j=0;j<IV_SIZE;++j)
-    //     target.push_back(left->iv[j]);
-    // for(int j=0;j<TAG_SIZE;++j)
-    //     target.push_back(left->tag[j]);
-    // for(int j=0;j<INT32_LENGTH;++j)
-    //     target.push_back(left->data[j]);
-    // if(!containsLine(target)){
-    //     write(left);
-    // }
-    // // write(left);
-    // // target.clear();
-    // FILE *fp;
-    // std::string filename;
-    // filename = "/var/lib/postgresql/14/main/store.txt";
-    // fp = fopen(filename.c_str(), "a"); // 打开文件以写入模式
-    // if (fp == NULL) {
-    //     printf("无法打开文件。\n");
-    //     // return;  
-    // } 
-    // for(int j = 0;j<IV_SIZE;++j){
-    //     fprintf(fp,"%d ",left->iv[j]);
-    //     fflush(fp);
-    // }
-    // for(int j = 0;j<TAG_SIZE;++j){
-    //     fprintf(fp,"%d ",left->tag[j]);
-    //     fflush(fp);
-    // }
-    // for(int j = 0;j<INT32_LENGTH;++j){
-    //     fprintf(fp,"%d ",left->data[j]);
-    //     fflush(fp);
-    // }
-    // fprintf(fp,"\n");
-    // fflush(fp); 
-    // fclose(fp);
-
 
     int error = enc_int_cmp(left, right, &res);
     if (error) print_error("%s %d", __func__, error);
