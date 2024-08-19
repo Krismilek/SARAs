@@ -14,15 +14,9 @@ using namespace std;
 #include <ctime>
 #include <vector>
 #include <cstring>
-#include <openssl/pem.h>
-#include <openssl/evp.h>
-#include <openssl/bio.h>
-#include <openssl/err.h>
-#include <openssl/buffer.h>
 #include <fstream>
 #include <cstdio>
 #include <sstream>
-#include <openssl/evp.h>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -50,6 +44,11 @@ using namespace std;
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <openssl/buffer.h>
+#include <openssl/pem.h>
+#include <openssl/evp.h>
+#include <openssl/bio.h>
+#include <openssl/err.h>
+#include <openssl/buffer.h>
 
 
 bool fileExists(const std::string& filename) {
@@ -57,26 +56,15 @@ bool fileExists(const std::string& filename) {
     return file.is_open();
 }
 
+
+// Generate and save the key
 bool generate_and_save_keys(const char* pub_filename, const char* priv_filename) {
-    EVP_PKEY_CTX* pkey_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, nullptr);
-    if (!pkey_ctx) return false;
-
-    // 生成密钥对
-    if (EVP_PKEY_keygen_init(pkey_ctx) <= 0 ||
-        EVP_PKEY_CTX_set_rsa_keygen_bits(pkey_ctx, 512) <= 0) {
-        EVP_PKEY_CTX_free(pkey_ctx);
-        return false;
-    }
-
     EVP_PKEY* pkey = nullptr;
-    if (EVP_PKEY_keygen(pkey_ctx, &pkey) <= 0) {
-        EVP_PKEY_CTX_free(pkey_ctx);
-        return false;
-    }
+    EVP_PKEY_CTX* pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, nullptr);
+    if (EVP_PKEY_keygen_init(pctx) <= 0) return false;
+    if (EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pctx, NID_X9_62_prime256v1) <= 0) return false;
+    if (EVP_PKEY_keygen(pctx, &pkey) <= 0) return false;
 
-    EVP_PKEY_CTX_free(pkey_ctx);
-
-    // 保存私钥
     FILE* priv_file = fopen(priv_filename, "w");
     if (!priv_file) {
         EVP_PKEY_free(pkey);
@@ -85,7 +73,6 @@ bool generate_and_save_keys(const char* pub_filename, const char* priv_filename)
     PEM_write_PrivateKey(priv_file, pkey, nullptr, nullptr, 0, nullptr, nullptr);
     fclose(priv_file);
 
-    // 保存公钥
     FILE* pub_file = fopen(pub_filename, "w");
     if (!pub_file) {
         EVP_PKEY_free(pkey);
@@ -95,93 +82,49 @@ bool generate_and_save_keys(const char* pub_filename, const char* priv_filename)
     fclose(pub_file);
 
     EVP_PKEY_free(pkey);
+    EVP_PKEY_CTX_free(pctx);
     return true;
 }
 
-
+//Sign
 bool sign_and_save_message_base64(const char* message, const char* priv_filename) {
-    // 打开并读取私钥文件
     FILE* priv_file = fopen(priv_filename, "r");
     if (!priv_file) return false;
-
     EVP_PKEY* pkey = PEM_read_PrivateKey(priv_file, nullptr, nullptr, nullptr);
     fclose(priv_file);
-    if (!pkey) return false;
-
-    
-    // 对消息进行 SHA-256 哈希
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256(reinterpret_cast<const unsigned char*>(message), strlen(message), hash);
-
-    // 初始化签名相关变量
-    unsigned char* sig = nullptr;
-    size_t sig_len = 0;
 
     EVP_MD_CTX* md_ctx = EVP_MD_CTX_new();
-    if (!md_ctx) {
-        EVP_PKEY_free(pkey);
-        return false;
-    }
+    size_t sig_len;
+    EVP_DigestSignInit(md_ctx, nullptr, EVP_sha256(), nullptr, pkey);
+    EVP_DigestSign(md_ctx, nullptr, &sig_len, (const unsigned char*)message, strlen(message));
+    std::vector<unsigned char> sig(sig_len);
+    EVP_DigestSign(md_ctx, sig.data(), &sig_len, (const unsigned char*)message, strlen(message));
 
-    if (EVP_DigestSignInit(md_ctx, nullptr, EVP_sha256(), nullptr, pkey) <= 0 ||
-        EVP_DigestSignUpdate(md_ctx, hash, sizeof(hash)) <= 0 ||
-        EVP_DigestSignFinal(md_ctx, nullptr, &sig_len) <= 0) {
-        EVP_MD_CTX_free(md_ctx);
-        EVP_PKEY_free(pkey);
-        return false;
-    }
-
-    sig = (unsigned char*)calloc(sig_len, sizeof(unsigned char));
-    if (sig == nullptr) {
-        EVP_MD_CTX_free(md_ctx);
-        EVP_PKEY_free(pkey);
-        return false;
-    }
-
-    if (EVP_DigestSignFinal(md_ctx, sig, &sig_len) <= 0) {
-        free(sig);
-        EVP_MD_CTX_free(md_ctx);
-        EVP_PKEY_free(pkey);
-        return false;
-    }
-
-    // 使用 Base64 编码签名
     BIO* bio = BIO_new(BIO_s_mem());
     BIO* b64 = BIO_new(BIO_f_base64());
-    BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+    BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL); 
     bio = BIO_push(b64, bio);
-    BIO_write(bio, sig, sig_len);
+    
+    BIO_write(bio, sig.data(), sig_len);
     BIO_flush(bio);
-    // std::cout << "签名长度：" << sig_len*8 << "bit" <<std::endl;
-    // std::cout << sig <<std::endl;
     char* base64_data;
     long base64_len = BIO_get_mem_data(bio, &base64_data);
 
-    // 保存 Base64 编码的签名到文件
     FILE* sig_file = fopen("/var/lib/postgresql/14/main/sign.txt", "w");
-    if (!sig_file) {
-        free(sig);
-        BIO_free_all(bio);
-        EVP_MD_CTX_free(md_ctx);
-        EVP_PKEY_free(pkey);
-        return false;
-    }
+    if (!sig_file) return false;
     fwrite(base64_data, 1, base64_len, sig_file);
     fclose(sig_file);
 
-    // 清理
-    free(sig);
     BIO_free_all(bio);
     EVP_MD_CTX_free(md_ctx);
     EVP_PKEY_free(pkey);
-
     return true;
 }
 
 void append_signature_to_file(const char* filename, const char* message) {
     const char* private_key_file = "/var/lib/postgresql/14/main/private_key.pem";
 
-    // 生成并保存签名到 Base64 文件
+    // Generate and save the signature to a Base64 file
     if (!sign_and_save_message_base64(message, private_key_file)) {
         FILE* fp = fopen("/var/lib/postgresql/14/main/debug.txt", "a");
         if (fp) {
@@ -193,7 +136,6 @@ void append_signature_to_file(const char* filename, const char* message) {
         return;
     }
 
-    // 读取签名内容
     FILE* sig_file = fopen("/var/lib/postgresql/14/main/sign.txt", "r");
     if (!sig_file) {
         std::cerr << "Failed to open signature file.\n";
@@ -209,7 +151,6 @@ void append_signature_to_file(const char* filename, const char* message) {
     }
     fclose(sig_file);
 
-    // 追加签名到文件
     FILE* fp = fopen(filename, "a");
     if (!fp) {
         std::cerr << "Failed to open file to append signature.\n";
@@ -222,44 +163,20 @@ void append_signature_to_file(const char* filename, const char* message) {
     free(signature);
 }
 
+//Generate hmac key
 std::vector<unsigned char> generate_hmac_key() {
-    std::vector<unsigned char> key(64);
+    std::vector<unsigned char> key(32);
     if (!RAND_bytes(key.data(), key.size())) {
         std::cout << "Failed to generate random key" << std::endl;
     }
     return key;
 }
 
+//Generate hmac
 std::vector<unsigned char> generate_hmac(const std::string& message, const std::vector<unsigned char>& key) {
-    unsigned char* hmac = HMAC(EVP_sha512(), key.data(), key.size(),
+    unsigned char* hmac = HMAC(EVP_sha256(), key.data(), key.size(),
                                reinterpret_cast<const unsigned char*>(message.c_str()), message.size(), nullptr, nullptr);
-    return std::vector<unsigned char>(hmac, hmac + EVP_MD_size(EVP_sha512()));
-}
-
-std::string base64_encode(const std::vector<unsigned char>& data) {
-    BIO *bio, *b64;
-    BUF_MEM *buffer_ptr;
-
-    b64 = BIO_new(BIO_f_base64());
-    bio = BIO_new(BIO_s_mem());
-    bio = BIO_push(b64, bio);
-
-    // Disable newlines in base64 encoding
-    BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
-
-    // Write data to the BIO
-    BIO_write(bio, data.data(), data.size());
-    BIO_flush(bio);
-
-    // Get the encoded data
-    BIO_get_mem_ptr(bio, &buffer_ptr);
-    BIO_set_close(bio, BIO_NOCLOSE);
-    BIO_free_all(bio);
-
-    std::string base64_str(buffer_ptr->data, buffer_ptr->length);
-    BUF_MEM_free(buffer_ptr);
-
-    return base64_str;
+    return std::vector<unsigned char>(hmac, hmac + EVP_MD_size(EVP_sha256()));
 }
 
 std::string to_base64_string(const std::vector<unsigned char>& data) {
@@ -390,6 +307,7 @@ int enc_int32_calc(EncIntCalcRequestData* req)
 //         sprintf(sign_buffer, "%d", req->left.data[j]);
 //         message += sign_buffer;
 //     }
+//     // generate_hmac(message,generate_hmac_key());
 //     std::vector<unsigned char> hmac = generate_hmac(message,generate_hmac_key());
 //     to_base64_string(hmac);
 
@@ -450,6 +368,7 @@ int enc_int32_calc(EncIntCalcRequestData* req)
 //         sprintf(sign_buffer, "%d", req->left.data[j]);
 //         message += sign_buffer;
 //     }
+//     // generate_hmac(message,generate_hmac_key());
 //     std::vector<unsigned char> hmac = generate_hmac(message,generate_hmac_key());
 //     to_base64_string(hmac);
 
@@ -492,9 +411,9 @@ int enc_int32_calc(EncIntCalcRequestData* req)
 //sign
 // int enc_int32_cmp(EncIntCmpRequestData* req)
 // {
-//     // if (!fileExists("/var/lib/postgresql/14/main/public_key.pem")){
-//     //     generate_and_save_keys("/var/lib/postgresql/14/main/public_key.pem","/var/lib/postgresql/14/main/private_key.pem");
-//     // }
+//     if (!fileExists("/var/lib/postgresql/14/main/public_key.pem")){
+//         generate_and_save_keys("/var/lib/postgresql/14/main/public_key.pem","/var/lib/postgresql/14/main/private_key.pem");
+//     }
 //     std::string message;
 //     char sign_buffer[20];
 //     std::string filename;

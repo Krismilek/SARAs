@@ -26,13 +26,13 @@ int is_exist[1][32];
 int left_flag=false;
 int right_flag = false;
 
-//判断是否存在公私钥
+//Check if the public and private keys exist
 bool fileExists(const std::string& filename) {
     std::ifstream file(filename);
     return file.is_open();
 }
 
-// 生成密钥并保存
+// Generate and save the public and private key
 bool generate_and_save_keys(const char* pub_filename, const char* priv_filename) {
     EVP_PKEY* pkey = nullptr;
     EVP_PKEY_CTX* pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, nullptr);
@@ -98,7 +98,6 @@ bool sign_and_save_message_base64(const char* message, const char* priv_filename
 void append_signature_to_file(const char* filename, const char* message) {
     const char* private_key_file = "private_key.pem";
 
-    // 生成并保存签名到Base64文件
     if (!sign_and_save_message_base64(message, private_key_file)) {
         FILE* fp;
         fp = fopen("/var/lib/postgresql/14/main/debug.txt","a");
@@ -111,7 +110,6 @@ void append_signature_to_file(const char* filename, const char* message) {
         return;
     }
 
-    // 读取签名内容
     FILE* sig_file = fopen("sign.txt", "r");
     if (!sig_file) {
         printf("Failed to open signature file.\n");
@@ -127,7 +125,6 @@ void append_signature_to_file(const char* filename, const char* message) {
     }
     fclose(sig_file);
 
-    // 追加签名到文件
     FILE* fp = fopen(filename, "a");
     if (!fp) {
         printf("Failed to open file to append signature.\n");
@@ -140,25 +137,25 @@ void append_signature_to_file(const char* filename, const char* message) {
     free(signature);
 }
 
-int containsString(const std::string& target) {
-    std::ifstream file("/var/lib/postgresql/14/main/sum.txt");
-    if (!file.is_open()) {
-        std::cerr << "Error opening file." << std::endl;
-        return 0;
-    }
+// int containsString(const std::string& target) {
+//     std::ifstream file("/var/lib/postgresql/14/main/sum.txt");
+//     if (!file.is_open()) {
+//         std::cerr << "Error opening file." << std::endl;
+//         return 0;
+//     }
 
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    std::string content = buffer.str();
+//     std::stringstream buffer;
+//     buffer << file.rdbuf();
+//     std::string content = buffer.str();
 
-    file.close();
+//     file.close();
 
-    if (content.find(target) != std::string::npos) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
+//     if (content.find(target) != std::string::npos) {
+//         return 1;
+//     } else {
+//         return 0;
+//     }
+// }
 
 void Recorder::update_write_fd(std::string filename_prefix)
 {
@@ -267,9 +264,9 @@ void Recorder::record(void* req_buffer)
                 std::string filename;
                 filename = "/var/lib/postgresql/14/main/sum.txt";
                 FILE *fp;
-                fp = fopen(filename.c_str(), "a"); // 打开文件以写入模式
+                fp = fopen(filename.c_str(), "a"); 
                 if (fp == NULL) {
-                    printf("无法打开文件。\n");
+                    printf("cannot open file.\n");
                     return;  
                 }  
                 fprintf(fp, "%s\n", buffer); 
@@ -325,13 +322,13 @@ void Recorder::record(void* req_buffer)
                 // append_signature_to_file(filename.c_str(),std::to_string(req_control->reqType).c_str());
                 append_signature_to_file(filename.c_str(),message.c_str());
             }
-            // rrprintf(1, dst, 6,
-            //     sizeof(int), &req_control->reqType,
-            //     ENC_INT32_LENGTH, &req->left,
-            //     ENC_INT32_LENGTH, &req->right,
-            //     sizeof(int), &req->cmp,
-            //     sizeof(int), &req_control->resp,
-            //     sizeof(uint64_t), &timestamp);
+            rrprintf(1, dst, 6,
+                sizeof(int), &req_control->reqType,
+                ENC_INT32_LENGTH, &req->left,
+                ENC_INT32_LENGTH, &req->right,
+                sizeof(int), &req->cmp,
+                sizeof(int), &req_control->resp,
+                sizeof(uint64_t), &timestamp);
         } else if (req_control->reqType == CMD_INT_SUM_BULK) {
             EncIntBulkRequestData* req = (EncIntBulkRequestData*)req_buffer;
             size_t length = sizeof(int) * 3 + ENC_INT32_LENGTH + sizeof(uint64_t);
@@ -348,9 +345,9 @@ void Recorder::record(void* req_buffer)
                 std::string filename;
                 filename = "/var/lib/postgresql/14/main/sum.txt";
                 FILE *fp;
-                fp = fopen(filename.c_str(), "a"); // 打开文件以写入模式
+                fp = fopen(filename.c_str(), "a"); 
                 if (fp == NULL) {
-                    printf("无法打开文件。\n");
+                    printf("cannot open file.\n");
                     return;  
                 }  
                 fprintf(fp, "%s\n", buffer); 
@@ -381,12 +378,12 @@ void Recorder::record(void* req_buffer)
                 fprintf(fp,"resp:%d\n",req_control->resp);
                 fflush(fp);
 
-                // rrprintf(1, dst, 5,
-                //     sizeof(int), &req_control->reqType,
-                //     sizeof(int), &req->bulk_size,
-                //     ENC_INT32_LENGTH, &req->res,
-                //     sizeof(int), &req_control->resp,
-                //     sizeof(uint64_t), &timestamp);
+                rrprintf(1, dst, 5,
+                    sizeof(int), &req_control->reqType,
+                    sizeof(int), &req->bulk_size,
+                    ENC_INT32_LENGTH, &req->res,
+                    sizeof(int), &req_control->resp,
+                    sizeof(uint64_t), &timestamp);
 
                 dst = get_write_buffer(req->bulk_size * ENC_INT32_LENGTH);
                 for (int i = 0; i < req->bulk_size; i++) {
@@ -444,9 +441,9 @@ void Recorder::record(void* req_buffer)
                 std::string filename;
                 filename = "/var/lib/postgresql/14/main/sum.txt";
                 FILE *fp;
-                fp = fopen(filename.c_str(), "a"); // 打开文件以写入模式
+                fp = fopen(filename.c_str(), "a"); 
                 if (fp == NULL) {
-                    printf("无法打开文件。\n");
+                    printf("cannot open file.\n");
                     return;  
                 }  
                 fprintf(fp, "%s\n", buffer); 

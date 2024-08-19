@@ -35,9 +35,9 @@ void write(EncInt* writedata){
     FILE *fp;
     std::string filename;
     filename = "/var/lib/postgresql/14/main/store.txt";
-    fp = fopen(filename.c_str(), "a"); // 打开文件以写入模式
+    fp = fopen(filename.c_str(), "a"); 
     if (fp == NULL) {
-        printf("无法打开文件。\n");
+        printf("cannot open file.\n");
         return;  
     } 
     for(int j = 0;j<IV_SIZE;++j){
