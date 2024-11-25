@@ -87,8 +87,8 @@ TPC-DS is a benchmark for decision support systems that models several common as
 
 For more usage instructions, see `tpcds/README.md`.
 
-# How to Simulate Digital Signatures and HMAC？
+# How to Simulate Digital Signatures？
 
-Our experiment uses ECDSA signatures. To simplify the experiment, a 256-bit key is used, and the generated signature is stored in base64 encoding. For HMAC, a random 256-bit key is generated, and the hash function used is sha256. How to use it? Firstly, copy `record/enc_int_ops.cpp`, then paste to `HEDB/src/privacy_zone/enc_ops/enc_int_ops.cpp`. Finally, recompile the HEDB project.
+Our experiment uses ECDSA signatures. To simplify the experiment, a 256-bit key is used, and the generated signature is stored in base64 encoding. How to use it? Firstly, copy `record/enc_int_ops.cpp`, then paste to `HEDB/src/privacy_zone/enc_ops/enc_int_ops.cpp`. Finally, recompile the HEDB project.
 
 **Note**: Please modify the file paths involved in the code as needed.
