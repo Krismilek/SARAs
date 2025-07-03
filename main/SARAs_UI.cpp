@@ -29,6 +29,50 @@
 int cnt = 0;// Used for multiple extraction operations and comparison of the value of q4
 const char* public_key_file = "/var/lib/postgresql/14/main/public_key.pem";
 
+
+/**
+ * This file visualizes the plaintext recovery process under SARAs (Substitution and Replay Attacks).
+ * The code implements six recovery scenarios, each corresponding to a different signing strategy.
+ * 
+ * Supported operator types:
+ * If an operator has an associated operand, the parameter it uses is indicated in parentheses.
+ *
+ *   1: Addition       (parameter: q3, if applicable)
+ *   2: Subtraction    (parameter: q2, if applicable)
+ *   3: Multiplication (no parameter)
+ *   4: Division       (parameter: q1, if applicable)
+ *   5: Equality       (parameter: q*, if applicable)
+ *   6: Modulo         (parameter: q4, if applicable)
+ *   7: Sum            (parameter: q2, if applicable)
+ * 
+ * Description of the six cases:
+ * 
+ * Case 1:
+ *   Operators: Division, Addition, Comparison
+ *   Signing: All operators are signed with operator name only.
+ * 
+ * Case 2:
+ *   Operators: Division, Addition, Equality
+ *   Signing: Division is signed with operator + operand; others are signed with operator only.
+ * 
+ * Case 3:
+ *   Operators: Division, Addition, Subtraction, Comparison
+ *   Signing: Addition is signed with operator only; others with operator + operand.
+ * 
+ * Case 4:
+ *   Operators: Division, Sum, Subtraction, Equality
+ *   Signing: Equality is signed with operator only; others with operator + operand.
+ * 
+ * Case 5:
+ *   Operators: Division, Sum, Subtraction, Equality
+ *   Signing: All operators are signed with operator + operand.
+ * 
+ * Case 6:
+ *   Operators: Division, Addition, Subtraction, Modulo, Equality
+ *   Signing: Equality is signed with operator only; others with operator + operand.
+ */
+
+
 class MyWindow : public Gtk::Window {
 public:
     MyWindow() {
